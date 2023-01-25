@@ -2,7 +2,7 @@ package ie.tudublin;
 
 public class Main
 {
-
+	
 	public static void helloProcessing()
 	{
 		String[] a = {"MAIN"};
@@ -11,11 +11,16 @@ public class Main
 	
 	public static void main(String[] args)
 	{
+		int lives = 9;
 		System.out.println("Hello world");
 		
-		Dog penny = new Dog();
-		penny.setName("Penny");
-		penny.speak();
+		Cat ginger = new Cat("Ginger");
+		ginger.setLives(lives);
+
+		for(int i=0;i<lives+1;i++) 
+		{
+			ginger.kill();
+		}
 	}
 	
 }
