@@ -4,6 +4,18 @@ import processing.core.PApplet;
 
 public class BugZap extends PApplet
 {
+	float playerX = 250;
+	float playerY = 490;
+	float playerWidth = 50;
+
+	boolean gameStart = false;
+
+	float bugX = 250;
+	float bugY = 250;
+	float bugWidth = 25;
+	int bugSpeed = 120;
+
+	int score = 0;
 
 	public void settings()
 	{
@@ -11,57 +23,138 @@ public class BugZap extends PApplet
 	}
 
 	public void setup() {
-		colorMode(HSB);
 		background(0);
-
-		x1 = random(0, width);
-		x2 = random(0, width);
-		y1 = random(0, height);
-		y2 = random(0, height);
-
-		float range = 5;
-
-		x1dir = random(-range, range);
-		x2dir = random(-range, range);
-		y1dir = random(-range, range);
-		y2dir = random(-range, range);
-
-		smooth();
 		
 	}
-
-	float x1, y1, x2, y2;
-	float x1dir, x2dir, y1dir, y2dir;
-	float c = 0;
 	
 	public void draw()
 	{	
-		strokeWeight(2);
-		stroke(c, 255, 255);
-		c = (c + 1f) % 255;
-		line(x1, y1, x2, y2);
-
-		x1 += x1dir;
-		x2 += x2dir;
-		y1 += y1dir;
-		y2 += y2dir;
+		if(gameStart == false) {
+			splashScreen();
+		}
 		
-		if (x1 < 0 || x1 > width)
-		{
-			x1dir = - x1dir;
-		}
-		if (y1 < 0 || y1 > height)
-		{
-			y1dir = - y1dir;
+		if(gameStart == true) {
+			clear();
+			drawPlayer(playerX, playerY, playerWidth);
+			drawBug();
+			fill(255,255,255);
+			text("Score: " + score, 475, 20);
+			textSize(10); 
+			textAlign(RIGHT);
 		}
 
-		if (x2 < 0 || x2 > width)
+		if(bugY >= playerY) 
 		{
-			x2dir = - x2dir;
+			gameOver();
 		}
-		if (y2 < 0 || y2 > height)
+	}
+
+	public void gameOver()
+	{
+		gameStart = false;
+		clear();
+		fill(163,163,163);
+		textSize(50); 
+		textAlign(CENTER);
+		text("GAME OVER!", 250, 100);
+		text("PRESS DELETE TO PLAY", 250, 175);
+		text("PRESS ENTER TO EXIT", 250, 250);
+		
+
+		if(keyCode == BACKSPACE) {
+			gameStart = true;
+			score = 0;
+			
+			resetBug();
+		}
+
+		if (keyCode == ENTER) {
+			exit();
+		}
+	}
+	public void keyPressed()
+	{
+		if (keyCode == LEFT)
 		{
-			y2dir = - y2dir;
+			if(playerX <= 1){
+				System.out.println("Border Reached.");
+			} else {
+				System.out.println("Left arrow pressed!");
+				playerX -= 2;
+			}
+		}
+		if (keyCode == RIGHT)
+		{
+			if(playerX >= 500){
+				System.out.println("Border Reached.");
+			} else {
+				System.out.println("Right arrow pressed!");
+				playerX += 2;
+			}
+		}
+		
+		if (key == ' ')
+		{
+			System.out.println("SPACE key pressed!");
+			stroke(255,0,0);
+			float lazerX = playerX + 10;
+			float lazerY = playerY - 10;
+			line(lazerX, lazerY, lazerX+2, 0);
+			if(playerX > bugX-(bugWidth/2) && playerX < bugX+(bugWidth/2)) 
+			{
+				score++;
+				System.out.println(score);
+				resetBug();
+			}
+
+			
+		}
+	}	
+
+	void drawPlayer(float x, float y, float w) {
+		noStroke();
+		fill(255,255,255);
+		triangle(playerX, 490, playerX+10, 480, playerX+20, 490);
+		if ((frameCount % 120) == 0)
+		{
+			
+			System.out.println("PLAYER COORDS: X: " + playerX + " Y: " + playerX);
+		}
+	}
+
+	void drawBug() {
+		noStroke();
+		fill(125,67,0);
+		circle(bugX,bugY,bugWidth);
+		
+		if ((frameCount % bugSpeed) == 0)
+		{
+			bugX = random(bugX-20,bugX+20);
+			bugY = random(bugY+20,bugY+10);
+			System.out.println("BUG COORDS: X: " + bugX + " Y: " + bugY);
+		}
+	}
+	
+	void splashScreen() {
+		clear();
+		fill(163,163,163);
+		text("BugZap", 250, 100);
+		text("PRESS SPACE TO PLAY", 250, 175);
+		textSize(50); 
+		textAlign(CENTER);
+
+		if(keyCode == ' ') {
+		gameStart = true;
+		}
+	}
+
+	void resetBug() 
+	{
+		bugX = 250;
+	 	bugY = -25;
+		bugWidth = 25;
+		if(bugSpeed != 10) {
+			bugSpeed = bugSpeed - 10;
 		}
 	}
 }
