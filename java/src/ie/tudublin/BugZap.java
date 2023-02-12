@@ -33,7 +33,7 @@ public class BugZap extends PApplet
 			splashScreen();
 		}
 		
-		if(gameStart == true) {
+		if(gameStart == true) {	
 			clear();
 			drawPlayer(playerX, playerY, playerWidth);
 			drawBug();
@@ -80,7 +80,7 @@ public class BugZap extends PApplet
 				System.out.println("Border Reached.");
 			} else {
 				System.out.println("Left arrow pressed!");
-				playerX -= 2;
+				playerX -= 4;
 			}
 		}
 		if (keyCode == RIGHT)
@@ -89,7 +89,7 @@ public class BugZap extends PApplet
 				System.out.println("Border Reached.");
 			} else {
 				System.out.println("Right arrow pressed!");
-				playerX += 2;
+				playerX += 4;
 			}
 		}
 		
