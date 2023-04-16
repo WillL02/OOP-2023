@@ -4,6 +4,17 @@ import processing.core.PApplet;
 
 public class BugZap extends PApplet
 {
+	float playerX = 250;
+	float playerY = 490;
+	float playerWidth = 40;
+
+	float bugX = 250;
+	float bugY = 250;
+	float bugWidth = 40;
+
+	int score = 0;
+
+	boolean gameStarted = false;
 
 	public void settings()
 	{
@@ -11,58 +22,102 @@ public class BugZap extends PApplet
 	}
 
 	public void setup() {
-		colorMode(HSB);
 		background(0);
-
-		x1 = random(0, width);
-		x2 = random(0, width);
-		y1 = random(0, height);
-		y2 = random(0, height);
-
-		float range = 5;
-
-		x1dir = random(-range, range);
-		x2dir = random(-range, range);
-		y1dir = random(-range, range);
-		y2dir = random(-range, range);
-
-		smooth();
 		
 	}
 
-	float x1, y1, x2, y2;
-	float x1dir, x2dir, y1dir, y2dir;
-	float c = 0;
 	
 	public void draw()
 	{	
-		strokeWeight(2);
-		stroke(c, 255, 255);
-		c = (c + 1f) % 255;
-		line(x1, y1, x2, y2);
+		if(gameStarted == true) 
+		{
+			clear();
+			drawPlayer(playerX, playerY, playerWidth);
+			drawBug(bugX, bugY, bugWidth);
+			printScore(score);
 
-		x1 += x1dir;
-		x2 += x2dir;
-		y1 += y1dir;
-		y2 += y2dir;
-		
-		if (x1 < 0 || x1 > width)
+			if(bugY > 500) 
+			{
+				gameStarted = false;
+				keyCode = 0;
+			}
+		} else
 		{
-			x1dir = - x1dir;
-		}
-		if (y1 < 0 || y1 > height)
-		{
-			y1dir = - y1dir;
-		}
+			clear();
+			respawnBug();
+			score = 0;
+			textSize(75);
+			text("BUGZAP",113,100);
 
-		if (x2 < 0 || x2 > width)
-		{
-			x2dir = - x2dir;
+			textSize(30);
+			text("Press Right Arrow To Play",113,140);
+			if(keyCode == RIGHT) 
+			{
+				gameStarted = true;
+			}
 		}
-		if (y2 < 0 || y2 > height)
-		{
-			y2dir = - y2dir;
-		}
-
 	}
+
+	void printScore(int score) 
+	{
+		fill(255);
+		textSize(15);
+		text("score: " + score, 425, 20);
+	}
+
+	void drawPlayer(float x,float y, float w) 
+	{
+		float offset = 20;
+		noStroke();
+		fill(255);
+		triangle(playerX,playerY,   playerX+offset,playerY-offset,   playerX+playerWidth,playerY);
+	}
+
+	void drawBug(float x, float y, float w) 
+	{
+		fill(255,0,0);
+		circle(x, y, w);
+		if ((frameCount % 30) == 0)
+		{	
+			bugX = random(bugX-50, bugX+50);
+			bugY = random(y+20, y+50);
+		}		
+	}
+
+	void respawnBug() 
+	{
+		bugX = random(50, 450);
+		bugY = -10;
+	}
+
+	public void keyPressed()
+	{
+		if(gameStarted == true) 
+			{
+			if (keyCode == LEFT)
+			{
+				System.out.println("Left arrow pressed");
+				playerX -= 6;
+			}
+			if (keyCode == RIGHT)
+			{
+				System.out.println("Right arrow pressed");
+				playerX += 6;
+			}
+			if (key == ' ')
+			{
+				float lazerX = playerX + 20;
+				float lazerY = playerY - 20;
+				System.out.println("SPACE key pressed");
+				stroke(255,0,0);
+				line(lazerX, lazerY,lazerX, 0);
+				if(lazerX >= bugX-bugWidth/2 && lazerX <=bugX+bugWidth/2) 
+				{
+					System.out.println("WORKS");
+					score++;
+					respawnBug();
+				}
+			} 
+		}
+	}	
 }
